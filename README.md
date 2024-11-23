@@ -31,7 +31,6 @@ export PATH="/opt/homebrew/opt/openssl@1.1/bin:$PATH"
 ```
 
 ```bash
-Копировать код
 source ~/.zshrc
 source ~/.bash_profile
 ```
