@@ -46,6 +46,7 @@ pip install psycopg2-binary
 
 
 ## Data source:
+### Save csv file by path: apps/shared/core/service/data/movies_dataset.csv
 
 ```bash
 https://www.kaggle.com/datasets/jrobischon/wikipedia-movie-plots
