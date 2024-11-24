@@ -5,7 +5,7 @@ from functools import wraps
 def transactional(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
-        session: Session = kwargs.get('session')
+        session: Session = kwargs.get("session")
         if session is None:
             raise ValueError("Session is required for transactional operations.")
 

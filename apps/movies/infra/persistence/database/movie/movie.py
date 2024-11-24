@@ -1,7 +1,7 @@
 from uuid import UUID
 
 from sqlalchemy import Column, Integer, String
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped, mapped_column
 
 from apps.shared.infra.persistence.database.base import Base
 

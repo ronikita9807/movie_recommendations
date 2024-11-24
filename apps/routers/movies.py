@@ -37,11 +37,12 @@ def delete_movies(movies_service: MoviesService = Depends(movies_service)):
 
 
 @router.get("/movies/by_name/{name}")
-def find_by_name(
-    name: str, movies_service: MoviesService = Depends(movies_service)
-):
+def find_by_name(name: str, movies_service: MoviesService = Depends(movies_service)):
     return movies_service.find_by_name(name=name)
 
+
 @router.get("/movies/by_desription/{description}")
-def find_by_desription(description: str, movies_service: MoviesService = Depends(movies_service)):
+def find_by_desription(
+    description: str, movies_service: MoviesService = Depends(movies_service)
+):
     return movies_service.find_movie_by_description(description=description)

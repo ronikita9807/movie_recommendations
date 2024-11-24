@@ -15,7 +15,7 @@ from apps.movies.infra.persistence.database.movie_vector.serializer import (
 )
 
 
-#Сделать протокол репозитория в отдельном файле
+# Сделать протокол репозитория в отдельном файле
 class PostgreSQLMovieVectorRepository:
     def __init__(self, session: Session):
         self.session = session

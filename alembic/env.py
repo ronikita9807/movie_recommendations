@@ -3,8 +3,11 @@ from sqlalchemy import engine_from_config, pool, MetaData
 from logging.config import fileConfig
 
 from apps.mappers import init_all_mappers
+
 # Импорт моделей из вашего приложения
-from apps.shared.infra.persistence.database.base import Base  # Импортируйте Base из вашего модуля с моделями
+from apps.shared.infra.persistence.database.base import (
+    Base,
+)  # Импортируйте Base из вашего модуля с моделями
 
 # Настройки для Alembic
 config = context.config

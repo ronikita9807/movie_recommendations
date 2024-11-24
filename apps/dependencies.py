@@ -1,8 +1,12 @@
 from fastapi import Depends
 from sqlalchemy.orm import Session
 
-from apps.movies.infra.persistence.database.movie.sql_movies_repo import PostgreSQLMovieRepository
-from apps.movies.infra.persistence.database.movie_vector.sql_movie_vectors_repo import PostgreSQLMovieVectorRepository
+from apps.movies.infra.persistence.database.movie.sql_movies_repo import (
+    PostgreSQLMovieRepository,
+)
+from apps.movies.infra.persistence.database.movie_vector.sql_movie_vectors_repo import (
+    PostgreSQLMovieVectorRepository,
+)
 from apps.shared.core.service.data_service import MoviesDataService
 from apps.shared.core.service.movies_service import MoviesService
 from apps.shared.core.service.vector_representation_service import (
@@ -23,7 +27,9 @@ def movies_repo(session: Session = Depends(get_session)) -> PostgreSQLMovieRepos
     return PostgreSQLMovieRepository(session=session)
 
 
-def movie_vectors_repo(session: Session = Depends(get_session)) -> PostgreSQLMovieVectorRepository:
+def movie_vectors_repo(
+    session: Session = Depends(get_session),
+) -> PostgreSQLMovieVectorRepository:
     return PostgreSQLMovieVectorRepository(session=session)
 
 

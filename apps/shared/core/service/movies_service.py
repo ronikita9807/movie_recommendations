@@ -1,7 +1,6 @@
 from pathlib import Path
 from uuid import UUID
 
-from sqlalchemy.orm import Session
 
 from apps.movies.core.domain.movie_vector import MovieVector
 from apps.movies.core.ports.dto.movie import MovieDTO
@@ -16,7 +15,6 @@ from apps.shared.core.service.data_service import MoviesDataService
 from apps.shared.core.service.vector_representation_service import (
     VectorRepresentationService,
 )
-from apps.shared.infra.persistence.database.transactional import transactional
 
 DATA_DIR = Path(__file__).resolve().parent
 
@@ -37,7 +35,9 @@ class MoviesService:
     # добавить поиск по описанию используя векторизацию полученного текста а затем поиск наиболее близкого вектора по значению используя ленивые извлечения объектов из базы
     # @transactional
     def find_movie_by_description(self, description: str) -> MovieDTO | None:
-        a = self._movie_vectors_repo.get_by_id(UUID("33caff11-437e-45ea-9170-703ca6b4358b"))
+        a = self._movie_vectors_repo.get_by_id(
+            UUID("33caff11-437e-45ea-9170-703ca6b4358b")
+        )
         return a
 
     # @transactional

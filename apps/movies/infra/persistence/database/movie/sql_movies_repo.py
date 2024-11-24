@@ -18,7 +18,9 @@ class PostgreSQLMovieRepository:
         self.session = session
 
     def get_by_id(self, movie_id: UUID) -> Optional[Movie]:
-        movie = self.session.query(MovieRow).filter(MovieRow.movie_id == movie_id).first()
+        movie = (
+            self.session.query(MovieRow).filter(MovieRow.movie_id == movie_id).first()
+        )
         return deserialize_movie(movie) if movie else None
 
     def get_all_movies(self, batch_size=100) -> Iterable[Movie]:

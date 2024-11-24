@@ -1,6 +1,5 @@
 from uuid import uuid4
 
-from numpy import ndarray
 from pydantic import Field, UUID4
 
 from apps.shared.core.domain.base import BaseDomainModel
