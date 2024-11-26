@@ -14,22 +14,22 @@ class VectorRepresentationService:
             fname=f"{DATA_DIR}/data/GoogleNews-vectors-negative300.bin", binary=True
         )
 
-    def get_representation(self, text: str):
+    def get_representation(self, text: str) -> list[float]:
         tokens = self._text_analyzer(text)
         lemmatized_words = [
             token.lemma_ for token in tokens if not token.is_stop and not token.is_punct
         ]
         return self._vectorize_words_list(lemmatized_words=lemmatized_words)
 
-    def _vectorize_words_list(self, lemmatized_words: list[str]):
+    def _vectorize_words_list(self, lemmatized_words: list[str]) -> list[float]:
         word_vectors = [
             self._w2v_model[word]
             for word in lemmatized_words
             if word in self._w2v_model
         ]
         if not word_vectors:
-            return np.zeros(self._w2v_model.vector_size)
-        return np.mean(word_vectors, axis=0)
+            return np.zeros(self._w2v_model.vector_size).tolist()
+        return np.mean(word_vectors, axis=0).tolist()
 
 
 if __name__ == "__main__":

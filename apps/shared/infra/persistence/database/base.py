@@ -14,6 +14,6 @@ Base = declarative_base()
 def get_session():
     session = SessionLocal()
     try:
-        yield session
+        return session
     finally:
         session.close()

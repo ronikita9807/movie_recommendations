@@ -1,16 +1,11 @@
 from pathlib import Path
-from uuid import UUID
 
 
 from apps.movies.core.domain.movie_vector import MovieVector
 from apps.movies.core.ports.dto.movie import MovieDTO
-from apps.movies.infra.persistence.database.movie.sql_movies_repo import (
-    PostgreSQLMovieRepository,
-)
+from apps.movies.core.ports.requires.movie_vectors_repo import MovieVectorsRepository
+from apps.movies.core.ports.requires.movies_repo import MoviesRepository
 
-from apps.movies.infra.persistence.database.movie_vector.sql_movie_vectors_repo import (
-    PostgreSQLMovieVectorRepository,
-)
 from apps.shared.core.service.data_service import MoviesDataService
 from apps.shared.core.service.vector_representation_service import (
     VectorRepresentationService,
@@ -22,8 +17,8 @@ DATA_DIR = Path(__file__).resolve().parent
 class MoviesService:
     def __init__(
         self,
-        movie_vectors_repo: PostgreSQLMovieVectorRepository,
-        movies_repo: PostgreSQLMovieRepository,
+        movie_vectors_repo: MovieVectorsRepository,
+        movies_repo: MoviesRepository,
         movies_data_service: MoviesDataService,
         vector_representation_service: VectorRepresentationService,
     ):
@@ -32,13 +27,11 @@ class MoviesService:
         self._movie_vectors_repo = movie_vectors_repo
         self._vector_representation_service = vector_representation_service
 
-    # добавить поиск по описанию используя векторизацию полученного текста а затем поиск наиболее близкого вектора по значению используя ленивые извлечения объектов из базы
     # @transactional
-    def find_movie_by_description(self, description: str) -> MovieDTO | None:
-        a = self._movie_vectors_repo.get_by_id(
-            UUID("33caff11-437e-45ea-9170-703ca6b4358b")
-        )
-        return a
+    def find_movies_by_description(self, description: str) -> list[MovieDTO]:
+        vector = self._vector_representation_service.get_representation(description)
+        movie_ids = self._movie_vectors_repo.get_movies_by_embeddings(vector)
+        return self._movies_repo.get_row_movies_by_ids(movie_ids)
 
     # @transactional
     def find_by_name(self, name: str) -> list[MovieDTO]:
@@ -46,14 +39,25 @@ class MoviesService:
 
     # @transactional
     def create_vectorized_representation(self) -> None:
-        # доставать объекты лениво
+        batch_size = 100
+        batch = []
         for movie in self._movies_repo.get_all_movies():
             vector = self._vector_representation_service.get_representation(movie.plot)
-            movie_vector = MovieVector(
-                movie_id=movie.movie_id,
-                vector=vector,
+            batch.append(
+                MovieVector(
+                    movie_id=movie.movie_id,
+                    vector=vector,
+                )
             )
-            self._movie_vectors_repo.save(movie_vector)
+            if len(batch) >= batch_size:
+                self._save_and_clear_batch(batch)
+
+        if batch:
+            self._save_and_clear_batch(batch)
+
+    def _save_and_clear_batch(self, batch: list[MovieVector]) -> None:
+        self._movie_vectors_repo.save(batch)
+        batch.clear()
 
     # @transactional
     def update_movies(self) -> None:
