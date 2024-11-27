@@ -1,6 +1,7 @@
 from dependency_injector.wiring import Provide, inject
-from fastapi import Depends, APIRouter, Path
+from fastapi import Depends, APIRouter, Path, HTTPException
 from fastapi.openapi.docs import get_swagger_ui_html
+from sqlalchemy.exc import IntegrityError
 
 from apps.dependencies import Container
 from apps.movies.core.ports.queries.movies_query_service import MoviesQueryService
@@ -40,8 +41,11 @@ def update_movies_vectors(
         Provide[Container.movie_vectors_generation_service]
     ),
 ):
-    movie_vectors_generation_service.create_vectorized_representation()
-    return {"message": "Movies vectors saved successfully"}
+    try:
+        movie_vectors_generation_service.create_vectorized_representation()
+        return {"message": "Movies vectors saved successfully"}
+    except IntegrityError as e:
+        raise HTTPException(status_code=404, detail=f"Duplicate key error: {e.orig}")
 
 
 @router.delete("/movies")

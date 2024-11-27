@@ -2,6 +2,7 @@ from pathlib import Path
 
 
 from apps.movies.core.domain.movie_vector import MovieVector
+from apps.movies.core.ports.queries.movies_query_service import MoviesQueryService
 from apps.movies.core.ports.requires.movie_vectors_repo import MovieVectorsRepository
 from apps.movies.core.ports.requires.movies_repo import MoviesRepository
 
@@ -16,17 +17,17 @@ class MovieVectorsGenerationService:
     def __init__(
         self,
         movie_vectors_repo: MovieVectorsRepository,
-        movies_repo: MoviesRepository,
+        movies_query_service: MoviesQueryService,
         vector_representation_service: VectorRepresentationService,
     ):
-        self._movies_repo = movies_repo
+        self._movies_query_service = movies_query_service
         self._movie_vectors_repo = movie_vectors_repo
         self._vector_representation_service = vector_representation_service
 
     def create_vectorized_representation(self) -> None:
         batch_size = 100
         batch = []
-        for movie in self._movies_repo.get_all_movies(batch_size=100):
+        for movie in self._movies_query_service.get_all_movies(batch_size=100):
             vector = self._vector_representation_service.get_representation(movie.plot)
             batch.append(
                 MovieVector(
