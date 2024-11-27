@@ -51,7 +51,7 @@ class Container(containers.DeclarativeContainer):
     )
     movie_vectors_generation_service = providers.Singleton(
         MovieVectorsGenerationService,
-        movies_repo=movies_repo,
+        movies_query_service=movies_query_service,
         movie_vectors_repo=movie_vectors_repo,
         vector_representation_service=vector_representation_service,
     )

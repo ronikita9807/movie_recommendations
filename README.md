@@ -45,10 +45,15 @@ pip install psycopg2-binary
 
 
 ## Data source:
-### Save csv file by path: apps/shared/core/service/data/movies_dataset.csv
-
+### Save csv file
 ```bash
+by path: apps/shared/core/service/data/movies_dataset.csv
 https://www.kaggle.com/datasets/jrobischon/wikipedia-movie-plots
+```
+### Save vectors data
+```bash
+by path: apps/shared/core/service/data/googlenews-vectors-negative300.bin
+https://www.kaggle.com/datasets/leadbest/googlenewsvectorsnegative300
 ```
 
 ## Run code formatter
@@ -65,3 +70,7 @@ ruff check apps --fix
 
 
 ## How to build
+
+```bash
+uvicorn main:app --reload
+```

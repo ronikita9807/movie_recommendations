@@ -1,6 +1,7 @@
 from typing import Optional
 from uuid import UUID
 
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from apps.movies.core.domain.movie_vector import MovieVector
@@ -28,7 +29,6 @@ class PostgreSQLMovieVectorsRepository(MovieVectorsRepository):
         )
         return deserialize_movie_vector(movie) if movie else None
 
-    # переписать репозитории
     def save(self, movie_vectors: list[MovieVector]) -> None:
         movie_vectors_row = [
             serialize_movie_vector(movie_vector) for movie_vector in movie_vectors
