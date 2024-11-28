@@ -14,5 +14,3 @@ def deserialize_movie(movie_row: MovieRow) -> Movie:
         plot=movie_row.plot,
         movie_id=movie_row.movie_id,
     )
-
-
