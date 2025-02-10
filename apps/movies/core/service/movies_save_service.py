@@ -2,8 +2,7 @@ from pathlib import Path
 
 
 from apps.movies.core.ports.requires.movies_repo import MoviesRepository
-
-from apps.shared.core.service.data_service import MoviesDataService
+from apps.movies.core.service.data_service import MoviesDataService
 
 DATA_DIR = Path(__file__).resolve().parent
 

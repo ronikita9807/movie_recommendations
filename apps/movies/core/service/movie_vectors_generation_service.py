@@ -4,9 +4,7 @@ from pathlib import Path
 from apps.movies.core.domain.movie_vector import MovieVector
 from apps.movies.core.ports.queries.movies_query_service import MoviesQueryService
 from apps.movies.core.ports.requires.movie_vectors_repo import MovieVectorsRepository
-from apps.movies.core.ports.requires.movies_repo import MoviesRepository
-
-from apps.shared.core.service.vector_representation_service import (
+from apps.movies.core.service.vector_representation_service import (
     VectorRepresentationService,
 )
 
@@ -27,7 +25,13 @@ class MovieVectorsGenerationService:
     def create_vectorized_representation(self) -> None:
         batch_size = 100
         batch = []
-        for movie in self._movies_query_service.get_all_movies(batch_size=100):
+        # выделяем этап создания векторов
+        # Создаем параллельно вектора
+        # после создания списка итогового сохраняем вектора по 100 элементов
+        """Можно попробовать работу с разделяемым ресурсом -  базой данных, 
+           тогда каждый процесс будет сохранять свой результат отдельно
+        """
+        for movie in self._movies_query_service.get_all_movies():
             vector = self._vector_representation_service.get_representation(movie.plot)
             batch.append(
                 MovieVector(

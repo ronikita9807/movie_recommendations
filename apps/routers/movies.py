@@ -1,26 +1,18 @@
 from dependency_injector.wiring import Provide, inject
 from fastapi import Depends, APIRouter, Path, HTTPException
-from fastapi.openapi.docs import get_swagger_ui_html
 from sqlalchemy.exc import IntegrityError
 
 from apps.dependencies import Container
 from apps.movies.core.ports.queries.movies_query_service import MoviesQueryService
-from apps.shared.core.service.movie_vectors_generation_service import (
+from apps.movies.core.service.movie_vectors_generation_service import (
     MovieVectorsGenerationService,
 )
-from apps.shared.core.service.movies_save_service import MoviesSaveService
-from apps.shared.core.service.search_movie_by_description_service import (
+from apps.movies.core.service.movies_save_service import MoviesSaveService
+from apps.movies.core.service.search_movie_by_description_service import (
     SearchMovieByDescriptionService,
 )
 
-container = Container()
 router = APIRouter()
-
-
-@router.get("/ui", include_in_schema=False)
-@inject
-def custom_swagger_ui():
-    return get_swagger_ui_html(openapi_url="/openapi.json", title="Custom Swagger UI")
 
 
 @router.post("/update-movies")
@@ -94,13 +86,3 @@ def find_by_desription(
     return search_movie_by_description_service.find_movies_by_description(
         description=description
     )
-
-
-@router.on_event("startup")
-async def startup_event():
-    container.wire(modules=[__name__])
-
-
-@router.on_event("shutdown")
-async def shutdown_event():
-    container.unwire()

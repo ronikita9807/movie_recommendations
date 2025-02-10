@@ -55,6 +55,17 @@ https://www.kaggle.com/datasets/jrobischon/wikipedia-movie-plots
 by path: apps/shared/core/service/data/googlenews-vectors-negative300.bin
 https://www.kaggle.com/datasets/leadbest/googlenewsvectorsnegative300
 ```
+### DataBase migrations
+## Create migration
+```bash
+alembic revision --autogenerate -m "comment"
+```
+
+## Run migrations
+
+```bash
+alembic upgrade head
+```
 
 ## Run code formatter
 
@@ -67,7 +78,6 @@ ruff format apps
 ```bash
 ruff check apps --fix
 ```
-
 
 ## How to build
 

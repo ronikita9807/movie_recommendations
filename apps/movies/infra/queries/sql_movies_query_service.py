@@ -18,9 +18,19 @@ class PostgreSQLMoviesQueryService(MoviesQueryService):
         )
         return [self._deserialize_movie(movie) for movie in movies]
 
-    def get_all_movies(self, batch_size: int) -> Iterable[MovieShortDTO]:
-        query = self.session.query(MovieRow).execution_options(stream_results=True)
+    def get_all_movies_by_batch(self, batch_size: int) -> Iterable[MovieShortDTO]:
+        offset = 0
+        while True:
+            query = self.session.query(MovieRow).limit(batch_size).offset(offset).all()
+            if not query:
+                break
 
+            for movie_row in query:
+                yield self._deserialize_short_movie(movie_row)
+            offset += 1
+
+    def get_all_movies(self) -> Iterable[MovieShortDTO]:
+        query = self.session.query(MovieRow).all()
         for movie_row in query:
             yield self._deserialize_short_movie(movie_row)
 
