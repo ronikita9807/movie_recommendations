@@ -6,8 +6,7 @@ from apps.movies.core.ports.queries.movie_vectors_query_service import (
     MovieVectorsQueryService,
 )
 from apps.movies.core.ports.queries.movies_query_service import MoviesQueryService
-
-from apps.shared.core.service.vector_representation_service import (
+from apps.movies.core.service.vector_representation_service import (
     VectorRepresentationService,
 )
 
