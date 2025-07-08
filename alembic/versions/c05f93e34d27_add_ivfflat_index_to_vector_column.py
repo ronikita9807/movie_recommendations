@@ -10,20 +10,22 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'c05f93e34d27'
-down_revision = '9c6bdcd74f4g'
+revision = "c05f93e34d27"
+down_revision = "9c6bdcd74f4g"
 branch_labels = None
 depends_on = None
 
 
 def upgrade():
     # Создаем индекс ivfflat для колонки vector
-    op.execute("""
+    op.execute(
+        """
         CREATE INDEX movie_vector_idx 
         ON movie_vector 
         USING ivfflat (vector) 
         WITH (lists = 100);
-    """)
+    """
+    )
 
 
 def downgrade():

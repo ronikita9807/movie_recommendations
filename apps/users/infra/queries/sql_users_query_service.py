@@ -8,4 +8,5 @@ class PostgreSQLUsersQueryService(UsersQueryService):
     def __init__(self, session: Session):
         self.session = session
 
-    def find_by_name(self, name: str) -> list[UserDTO]: ...
+    def find_by_name(self, name: str) -> list[UserDTO]:
+        ...

@@ -17,12 +17,14 @@ class PostgreSQLMovieVectorsQueryService(MovieVectorsQueryService):
     ) -> list[UUID]:
         query_vector = "[" + ", ".join(map(str, vector)) + "]"
 
-        query = text("""
+        query = text(
+            """
                     SELECT movie_id, vector <=> CAST(:query_vector AS vector) AS distance
                     FROM movie_vector
                     ORDER BY distance ASC
                     LIMIT :limit
-                """)
+                """
+        )
         result = self.session.execute(
             query, {"query_vector": query_vector, "limit": limit}
         )
