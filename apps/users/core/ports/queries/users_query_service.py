@@ -3,4 +3,5 @@ from apps.users.core.ports.dto.user import UserDTO
 
 
 class UsersQueryService(Protocol):
-    def find_by_name(self, name: str) -> list[UserDTO]: ...
+    def find_by_name(self, name: str) -> list[UserDTO]:
+        ...

@@ -4,4 +4,3 @@ class ObjectExistsException(Exception):
 
     def __str__(self) -> str:
         return f"Object already exists, details: {self._message}"
-

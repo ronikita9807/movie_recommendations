@@ -21,6 +21,13 @@ from apps.movies.infra.queries.sql_movie_vectors_query_service import (
 from apps.movies.infra.queries.sql_movies_query_service import (
     PostgreSQLMoviesQueryService,
 )
+from apps.reviews.core.service.reviews_creation_service import ReviewsCreationService
+from apps.reviews.infra.persistence.database.review.sql_reviews_repo import (
+    PostgreSQLReviewsRepository,
+)
+from apps.reviews.infra.queries.sql_reviews_query_service import (
+    PostgreSQLReviewsQueryService,
+)
 from apps.shared.infra.persistence.database.base import get_session
 
 from dependency_injector import containers, providers
@@ -33,7 +40,12 @@ from apps.users.infra.persistence.database.user.sql_users_repo import (
 
 class Container(containers.DeclarativeContainer):
     wiring_config = containers.WiringConfiguration(
-        modules=["apps.routers.movies", "apps.routers.users", "apps.routers.base"]
+        modules=[
+            "apps.routers.movies",
+            "apps.routers.users",
+            "apps.routers.base",
+            "apps.routers.reviews",
+        ]
     )
 
     session = providers.Singleton(get_session)
@@ -43,6 +55,7 @@ class Container(containers.DeclarativeContainer):
         PostgreSQLMovieVectorsRepository, session=session
     )
     users_repo = providers.Singleton(PostgreSQLUsersRepository, session=session)
+    reviews_repo = providers.Singleton(PostgreSQLReviewsRepository, session=session)
 
     movie_vectors_query_service = providers.Singleton(
         PostgreSQLMovieVectorsQueryService, session=session
@@ -73,4 +86,10 @@ class Container(containers.DeclarativeContainer):
     )
     users_creation_service = providers.Singleton(
         UsersCreationService, users_repo=users_repo
+    )
+    reviews_creation_service = providers.Singleton(
+        ReviewsCreationService, reviews_repo=reviews_repo
+    )
+    reviews_query_service = providers.Singleton(
+        PostgreSQLReviewsQueryService, session=session
     )

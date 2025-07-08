@@ -55,13 +55,13 @@ https://www.kaggle.com/datasets/jrobischon/wikipedia-movie-plots
 by path: apps/shared/core/service/data/googlenews-vectors-negative300.bin
 https://www.kaggle.com/datasets/leadbest/googlenewsvectorsnegative300
 ```
-### DataBase migrations
-## Create migration
+## DataBase migrations
+### Create migration
 ```bash
 alembic revision --autogenerate -m "comment"
 ```
 
-## Run migrations
+### Run migrations
 
 ```bash
 alembic upgrade head

@@ -1,5 +1,6 @@
-from pathlib import Path
-
+import multiprocessing
+from functools import partial
+from uuid import UUID
 
 from apps.movies.core.domain.movie_vector import MovieVector
 from apps.movies.core.ports.queries.movies_query_service import MoviesQueryService
@@ -7,8 +8,6 @@ from apps.movies.core.ports.requires.movie_vectors_repo import MovieVectorsRepos
 from apps.movies.core.service.vector_representation_service import (
     VectorRepresentationService,
 )
-
-DATA_DIR = Path(__file__).resolve().parent
 
 
 class MovieVectorsGenerationService:
@@ -25,12 +24,6 @@ class MovieVectorsGenerationService:
     def create_vectorized_representation(self) -> None:
         batch_size = 100
         batch = []
-        # выделяем этап создания векторов
-        # Создаем параллельно вектора
-        # после создания списка итогового сохраняем вектора по 100 элементов
-        """Можно попробовать работу с разделяемым ресурсом -  базой данных, 
-           тогда каждый процесс будет сохранять свой результат отдельно
-        """
         for movie in self._movies_query_service.get_all_movies():
             vector = self._vector_representation_service.get_representation(movie.plot)
             batch.append(
