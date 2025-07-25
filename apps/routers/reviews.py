@@ -1,10 +1,11 @@
 
 
 from dependency_injector.wiring import Provide, inject
-from fastapi import Depends, APIRouter, HTTPException, Path
+from fastapi import Depends, APIRouter, HTTPException, Path, Response
 
 from apps.dependencies import Container
 from apps.reviews.core.ports.comands.review import ReviewPublicCommand
+from apps.reviews.core.ports.comands.review_delete_command import ReviewDeletePublicCommand
 from apps.reviews.core.ports.queries.reviews_query_service import ReviewsQueryService
 from apps.reviews.core.service.reviews_creation_service import ReviewsCreationService
 from apps.shared.infra.exceptions.base_exceptions import ObjectExistsException
@@ -27,6 +28,38 @@ def create_review(
         raise HTTPException(status_code=400, detail=str(error))
 
     return {"message": "Review created successfully"}
+
+
+@router.patch("/review")
+@inject
+def update_review(
+    command: ReviewPublicCommand,
+    reviews_creation_service: ReviewsCreationService = Depends(
+        Provide[Container.reviews_creation_service]
+    ),
+):
+    try:
+        reviews_creation_service.update_review(command)
+    except Exception as error:
+        raise HTTPException(status_code=500, detail=str(error))
+
+    return {"message": "Review updated successfully"}
+
+
+@router.delete("/review")
+@inject
+def delete_review(
+    command: ReviewDeletePublicCommand,
+    reviews_creation_service: ReviewsCreationService = Depends(
+        Provide[Container.reviews_creation_service]
+    ),
+):
+    try:
+        reviews_creation_service.delete_review(command)
+    except Exception as error:
+        raise HTTPException(status_code=500, detail=str(error))
+
+    return Response(status_code=204)
 
 
 @router.get("/reviews/by_user_name/{name}")
