@@ -1,3 +1,4 @@
+from sqlalchemy import select, delete
 from sqlalchemy.orm import Session
 
 from apps.shared.infra.exceptions.base_exceptions import ObjectExistsException
@@ -12,17 +13,15 @@ class PostgreSQLUsersRepository(UsersRepository):
         self.session = session
 
     def save(self, user: User) -> None:
-        previous_user = (
-            self.session.query(UserRow)
-            .filter(UserRow.user_name == user.user_name)
-            .one_or_none()
-        )
-        if previous_user:
+        stmt = select(UserRow).where(UserRow.user_name == user.user_name)
+        existing = self.session.execute(stmt).scalar_one_or_none()
+        if existing:
             raise ObjectExistsException("User already exists in database")
         user_row = serialize_user(user)
-        self.session.add(user_row)
-        self.session.commit()
+        with self.session.begin():
+            self.session.add(user_row)
 
-    def delete(self):
-        self.session.query(UserRow).delete()
-        self.session.commit()
+    def delete(self) -> None:
+        stmt = delete(UserRow)
+        with self.session.begin():
+            self.session.execute(stmt)

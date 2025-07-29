@@ -1,3 +1,4 @@
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from apps.reviews.core.domain.review import Review
@@ -15,13 +16,14 @@ class PostgreSQLReviewsQueryService(ReviewsQueryService):
         self.session = session
 
     def find_by_user_name(self, name: str) -> list[ReviewDTO]:
-        reviews = (
-            self.session.query(ReviewRow)
+        stmt = (
+            select(ReviewRow)
             .join(ReviewRow.user)
-            .filter(UserRow.user_name == name)
-            .all()
+            .where(UserRow.user_name == name)
         )
-        return [self._deserialize_review(review) for review in reviews]
+        with self.session.begin():
+            results = self.session.execute(stmt).scalars().all()
+        return [self._deserialize_review(review) for review in results]
 
     @staticmethod
     def _deserialize_review(review: ReviewRow) -> ReviewDTO:

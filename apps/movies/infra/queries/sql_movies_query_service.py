@@ -1,6 +1,7 @@
 from typing import Iterable
 from uuid import UUID
 
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from apps.movies.core.ports.dto.movie import MovieDTO, MovieShortDTO
@@ -13,34 +14,36 @@ class PostgreSQLMoviesQueryService(MoviesQueryService):
         self.session = session
 
     def get_movies_by_ids(self, movie_ids: list[UUID]) -> list[MovieDTO]:
-        movies = (
-            self.session.query(MovieRow).filter(MovieRow.movie_id.in_(movie_ids)).all()
-        )
-        return [self._deserialize_movie(movie) for movie in movies]
+        stmt = select(MovieRow).where(MovieRow.movie_id.in_(movie_ids))
+        with self.session.begin():
+            results = self.session.execute(stmt).scalars().all()
+        return [self._deserialize_movie(row) for row in results]
 
     def get_all_movies_by_batch(self, batch_size: int) -> Iterable[MovieShortDTO]:
         offset = 0
         while True:
-            query = self.session.query(MovieRow).limit(batch_size).offset(offset).all()
-            if not query:
+            stmt = select(MovieRow).limit(batch_size).offset(offset)
+            with self.session.begin():
+                batch = self.session.execute(stmt).scalars().all()
+            if not batch:
                 break
-
-            for movie_row in query:
-                yield self._deserialize_short_movie(movie_row)
-            offset += 1
+            for row in batch:
+                yield self._deserialize_short_movie(row)
+            offset += batch_size
 
     def get_all_movies(self) -> Iterable[MovieShortDTO]:
-        query = self.session.query(MovieRow).all()
-        for movie_row in query:
-            yield self._deserialize_short_movie(movie_row)
+        stmt = select(MovieRow)
+        with self.session.begin():
+            results = self.session.execute(stmt).scalars()
+            for row in results:
+                yield self._deserialize_short_movie(row)
 
     def find_by_name(self, name: str) -> list[MovieDTO]:
-        return [
-            self._deserialize_movie(movie)
-            for movie in self.session.query(MovieRow)
-            .filter(MovieRow.title.ilike(f"%{name}%"))
-            .all()
-        ]
+        pattern = f"%{name}%"
+        stmt = select(MovieRow).where(MovieRow.title.ilike(pattern))
+        with self.session.begin():
+            results = self.session.execute(stmt).scalars().all()
+        return [self._deserialize_movie(row) for row in results]
 
     @staticmethod
     def _deserialize_movie(movie_row: MovieRow) -> MovieDTO:
