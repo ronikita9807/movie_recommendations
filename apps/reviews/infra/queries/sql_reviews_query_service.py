@@ -16,11 +16,7 @@ class PostgreSQLReviewsQueryService(ReviewsQueryService):
         self.session = session
 
     def find_by_user_name(self, name: str) -> list[ReviewDTO]:
-        stmt = (
-            select(ReviewRow)
-            .join(ReviewRow.user)
-            .where(UserRow.user_name == name)
-        )
+        stmt = select(ReviewRow).join(ReviewRow.user).where(UserRow.user_name == name)
         with self.session.begin():
             results = self.session.execute(stmt).scalars().all()
         return [self._deserialize_review(review) for review in results]

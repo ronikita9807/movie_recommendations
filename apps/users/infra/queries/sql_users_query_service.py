@@ -29,4 +29,3 @@ class PostgreSQLUsersQueryService(UsersQueryService):
             user_name=user_row.user_name,
             email=user_row.email,
         )
-

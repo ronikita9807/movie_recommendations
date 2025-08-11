@@ -6,9 +6,15 @@ from sqlalchemy.orm import Session
 
 from apps.movies.core.domain.movie_vector import MovieVector
 from apps.movies.core.ports.requires.movie_vectors_repo import MovieVectorsRepository
-from apps.movies.infra.persistence.database.movie_vector.deserializer import deserialize_movie_vector
-from apps.movies.infra.persistence.database.movie_vector.movie_vector import MovieVectorRow
-from apps.movies.infra.persistence.database.movie_vector.serializer import serialize_movie_vector
+from apps.movies.infra.persistence.database.movie_vector.deserializer import (
+    deserialize_movie_vector,
+)
+from apps.movies.infra.persistence.database.movie_vector.movie_vector import (
+    MovieVectorRow,
+)
+from apps.movies.infra.persistence.database.movie_vector.serializer import (
+    serialize_movie_vector,
+)
 
 
 class PostgreSQLMovieVectorsRepository(MovieVectorsRepository):
@@ -16,9 +22,7 @@ class PostgreSQLMovieVectorsRepository(MovieVectorsRepository):
         self.session = session
 
     def get_by_id(self, movie_id: UUID) -> Optional[MovieVector]:
-        stmt = select(MovieVectorRow).where(
-            MovieVectorRow.movie_id == movie_id
-        )
+        stmt = select(MovieVectorRow).where(MovieVectorRow.movie_id == movie_id)
         movie_row = self.session.execute(stmt).scalar_one_or_none()
         return deserialize_movie_vector(movie_row) if movie_row else None
 

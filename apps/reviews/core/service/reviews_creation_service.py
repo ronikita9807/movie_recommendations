@@ -30,5 +30,5 @@ class ReviewsCreationService:
             user_id=command.user_id, movie_id=command.movie_id
         )
 
-    def delete_users(self) -> None:
+    def delete_reviews(self) -> None:
         return self._reviews_repo.delete()
